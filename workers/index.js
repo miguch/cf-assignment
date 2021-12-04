@@ -7,8 +7,14 @@ const router = Router()
 Our index route, a simple hello world.
 */
 router.get('/', () => {
-    return new Response('Hello, Socials!')
+    return new Response('Hello, Socials!', {
+        headers: { ...corsHeader },
+    })
 })
+
+const corsHeader = {
+    'Access-Control-Allow-Origin': 'https://8ca93336.cf-assignment-4fg.pages.dev',
+}
 
 router.get('/posts', async request => {
     let from = decodeURIComponent(request.query.from)
@@ -30,6 +36,7 @@ router.get('/posts', async request => {
     return new Response(JSON.stringify(res.map(JSON.parse)), {
         headers: {
             'Content-Type': 'application/json',
+            ...corsHeader,
         },
     })
 })
@@ -78,6 +85,7 @@ router.post('/posts', async request => {
             status: 400,
             headers: {
                 'Content-Type': 'application/json',
+                ...corsHeader,
             },
         })
     }
