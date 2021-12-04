@@ -1,0 +1,12 @@
+name = "socials"
+type = "webpack"
+
+account_id = "89b4991551fa841e1d806cb6f193194a"
+workers_dev = true
+route = ""
+zone_id = ""
+compatibility_date = "2021-12-03"
+
+kv_namespaces = [ 
+  { binding = "SOCIALS_DATA", id = "48459fd222304c1283cc24f38a65274e", preview_id = "3c734c2c6bec427aab2de93fd1fcff30" }
+]
