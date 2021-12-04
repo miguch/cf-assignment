@@ -2,5 +2,5 @@ Git Credentials:
 Username: 7vc0aijoeiwk70PL2
 Password: 2uURSUrN
 
-Workers URL: 
-Pages URL: 
+Workers URL: https://socials.miguch.workers.dev
+Pages URL: https://cf-assignment-4fg.pages.dev

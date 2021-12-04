@@ -13,7 +13,10 @@ router.get('/', () => {
 })
 
 const corsHeader = {
-    'Access-Control-Allow-Origin': 'https://8ca93336.cf-assignment-4fg.pages.dev',
+    'Access-Control-Allow-Origin':
+        'https://cf-assignment-4fg.pages.dev',
+    'Access-Control-Allow-Methods': 'GET,HEAD,POST,OPTIONS',
+    'Access-Control-Max-Age': '86400',
 }
 
 router.get('/posts', async request => {
@@ -66,6 +69,7 @@ router.post('/posts', async request => {
             return new Response(JSON.stringify({ success: true }), {
                 headers: {
                     'Content-Type': 'application/json',
+                    ...corsHeader,
                 },
             })
         } else {
@@ -77,6 +81,7 @@ router.post('/posts', async request => {
                     status: 400,
                     headers: {
                         'Content-Type': 'application/json',
+                        ...corsHeader,
                     },
                 }
             )
@@ -97,12 +102,50 @@ above, therefore it's useful as a 404 (and avoids us hitting worker exceptions, 
 
 Visit any page that doesn't exist (e.g. /foobar) to see it in action.
 */
-router.all('*', () => new Response('404, not found!', { status: 404 }))
+router.all(
+    '*',
+    () =>
+        new Response('404, not found!', {
+            status: 404,
+            headers: {
+                ...corsHeader,
+            },
+        })
+)
+
+// deal with CORS
+function handleOptions(request) {
+    if (
+        request.headers.get('Origin') !== null &&
+        request.headers.get('Access-Control-Request-Method') !== null &&
+        request.headers.get('Access-Control-Request-Headers') !== null
+    ) {
+        // Handle CORS pre-flight request.
+        return new Response(null, {
+            headers: {
+                ...corsHeader,
+                'Access-Control-Allow-Headers': request.headers.get(
+                    'Access-Control-Request-Headers'
+                ),
+            },
+        })
+    } else {
+        // Handle standard OPTIONS request.
+        return new Response(null, {
+            headers: {
+                Allow: 'GET, HEAD, POST, OPTIONS',
+            },
+        })
+    }
+}
 
 /*
 This snippet ties our worker to the router we deifned above, all incoming requests
 are passed to the router where your routes are called and the response is sent.
 */
 addEventListener('fetch', e => {
+    if (e.request.method === 'OPTIONS') {
+        return e.respondWith(handleOptions(e.request))
+    }
     e.respondWith(router.handle(e.request))
 })
