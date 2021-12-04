@@ -16,8 +16,13 @@
         </n-button>
       </template>
       <post-list :post-list="postList" :can-load-more="canLoadMore"></post-list>
+      <n-button class="loadmore" v-if="canLoadMore" @click="loadPosts">Load more</n-button>
+      <div class="loadmore" v-else>You have reached the end~</div>
     </n-card>
-    <new-post-form @success="onRefresh" v-model:showForm="showNewForm"></new-post-form>
+    <new-post-form
+      @success="onRefresh"
+      v-model:showForm="showNewForm"
+    ></new-post-form>
   </div>
 </template>
 
@@ -43,7 +48,7 @@ const loadPosts = async () => {
         from: postList.value.length,
       },
     })
-    if (res < pageSize) {
+    if (res.length < pageSize) {
       canLoadMore.value = false
     }
     postList.value.push(...res)
@@ -58,7 +63,8 @@ onMounted(() => {
 })
 const onRefresh = () => {
   postList.value = []
-  loadPosts();
+  canLoadMore.value = true
+  loadPosts()
 }
 const onNewPost = () => {
   showNewForm.value = true
@@ -72,5 +78,10 @@ const onNewPost = () => {
   width: 60%;
   min-width: 700px;
   border: 1px solid rgb(77, 69, 69);
+}
+.loadmore {
+  text-align: center;
+  margin: 12px auto;
+  display: block;
 }
 </style>
